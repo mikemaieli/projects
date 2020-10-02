@@ -1,0 +1,87 @@
+---
+title: "Super Bowl Box Analysis"
+author: "Mike Maieli"
+date: "12/28/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# About
+
+```{r}
+# load packages
+library(tidyverse)
+library(hrbrthemes)
+library(highcharter)
+```
+
+```{r}
+# load data
+score_data <- read_csv("https://raw.githubusercontent.com/mikemaieli/superbowlsquares/master/superbowlscores.csv")
+```
+
+```{r}
+# add column which includes the last digit of both the total score columns and select the year, superbowl, quarter, and the new columns in a new data frame
+
+final_digits <- score_data %>% 
+  mutate(afc_digit = afc_total_score %% 10, nfc_digit = nfc_total_score %% 10) %>% 
+  select(year, superbowl, quarter, afc_digit, nfc_digit) %>% 
+  mutate_all(as.character)
+```
+
+```{r}
+# manipulate data set to show the count of occurances for each combination
+digit_counts <- final_digits %>%
+  
+  # shape data
+  group_by(afc_digit, nfc_digit) %>% 
+  summarize(occurances = n())
+
+# create heat map
+ggplot(digit_counts, aes( x = afc_digit,
+                          y = nfc_digit)) +
+  geom_tile(aes(fill = occurances), color = "black") +
+  geom_text(aes(label = scales::percent((occurances/sum(digit_counts$occurances)))),
+            color = "white") +
+  scale_fill_gradient(low = "gray75", high = "dodgerblue4", na.value = "white") +
+  scale_x_discrete(position = "top",
+                   limits = c("0","1","2","3","4","5","6","7","8","9")) +
+  scale_y_discrete(limits = rev(c("0","1","2","3","4","5","6","7","8","9"))) +
+  labs(title = "Super Bowl Boxes",
+       subtitle = "YOLO pickled photo booth, keytar keffiyeh thundercats art party helvetica wolf intelligentsia.",
+       x = "AFC",
+       y = "NFC") +
+  theme_ipsum() + 
+  theme(panel.grid.major = element_blank(),
+        legend.position = "none") +
+  geom_vline(xintercept=c(.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5), color="black", size = .3) +
+  geom_hline(yintercept=c(.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5), color="black", size = .3)
+
+```
+
+```{r}
+fntltp <- JS("function(){
+  return this.point.x + ' ' +  this.series.yAxis.categories[this.point.y] + ':<br>' +
+  Highcharts.numberFormat(this.point.value, 2);
+}")
+
+hchart(digit_counts, "heatmap", hcaes(x = afc_digit, y = nfc_digit, value = occurances)) %>% 
+  hc_colorAxis(stops = color_stops(10, rev(inferno(10))),
+               type = "logarithmic") %>% 
+  hc_yAxis(reversed = TRUE, offset = -20, tickLength = 0,
+           gridLineWidth = 0, minorGridLineWidth = 0,
+           labels = list(style = list(fontSize = "8px"))) %>% 
+  hc_tooltip(formatter = fntltp) %>% 
+  hc_title(text = "Infectious Diseases and Vaccines") %>% 
+  hc_legend(layout = "vertical", verticalAlign = "top",
+            align = "right", valueDecimals = 0) %>% 
+  hc_size(height = 600)  
+  
+  
+  
+digit_counts
+```
+

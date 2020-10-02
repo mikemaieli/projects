@@ -1,0 +1,12 @@
+name: SuperBowlBoxes
+title: SuperBowlBoxes
+username:
+account: mike-maieli
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1623381
+bundleId: 2699756
+url: https://mike-maieli.shinyapps.io/SuperBowlBoxes/
+when: 1577809728.51913
+asMultiple: FALSE
+asStatic: FALSE
