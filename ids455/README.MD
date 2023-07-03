@@ -1,0 +1,1 @@
+These are visualizations for Northwestern University's MS in Information Design and Strategy program Data and Text Visualization course. Visualizations are based upon existing visualizations, with the source listed on each viz.

@@ -1,0 +1,103 @@
+<!DOCTYPE HTML>
+<meta charset="utf-8">
+<html>
+<head>
+
+<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400italic,600italic,700italic,200,300,400,600,700,900">
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+
+<style>
+
+body, h1, h2, h3, p {
+  margin: 0;
+  padding: 0;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 1em;
+  color: #333;
+  font-weight: 400;
+}
+
+#content {
+  margin: 5px;
+  padding: 20px;
+  width: 805px;
+  border: 1px solid #ccc;
+}
+
+#map {
+  margin: 10px 0px 0px 0px;
+  padding: 0px;
+}
+
+h1 {
+  line-height: 1em;
+  font-size: 1.75em;
+  font-weight: 900;
+  color: #000;
+}
+
+p {
+  margin: 5px 0px 0px 0px;
+}
+
+.counties {
+  fill: none;
+}
+
+.states {
+  fill: none;
+  stroke: #fff;
+  stroke-linejoin: round;
+}
+
+select {
+  margin: 5px 0px 0px 0px;
+  display: block;
+}
+
+.tooltip {
+  position: absolute;
+  padding: 7px;
+  font-size: 0.9em;
+  pointer-events: none;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+
+  -moz-box-shadow:    3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+  -webkit-box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+  box-shadow:         3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+}
+
+.tooltip p {
+  margin: 0;
+  padding: 0;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="content">
+<h1>Mapping Tax Day</h1>
+<p>Individual income tax statistics, 2011</p>
+<select id="varmenu">
+	<option selected value="itemized_pct">Itemized Deductions</option>
+	<option value="eitc_pct">Earned Income Credit</option>
+	<option value="mortgageded_pct">Mortgage Interest Deduction</option>
+	<option value="capgain_pct">Capital Gains</option>
+	<option value="interest_pct">Taxable Interest</option>
+	<option value="childcredit_pct">Child Credit</option>
+	<option value="prep_pct">Paid Tax Preparer</option>
+</select>
+<div id="map"></div>
+<p>Source: Internal Revenue Service.</p>
+</div>
+
+<script type="text/javascript" src="https://raw.githubusercontent.com/mikemaieli/d3/master/ids455/maptest/map.js"></script>
+
+</body>
+</html>

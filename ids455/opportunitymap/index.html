@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<meta charset="utf-8">
+<html>
+<head>
+
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://gist.githubusercontent.com/ElDeveloper/7d4f4a12683b03008435/raw/7ab04a76821117541a86764036e41edb00fae4f3/topojson.v1.min.js"></script>
+
+<style>
+
+body, h1, h2, h3, p {
+  margin: 0;
+  padding: 0;
+  font-family: 'Palatino', sans-serif;
+  font-size: 1em;
+  color: #333;
+  font-weight: 400;
+}
+
+#content {
+  margin: 5px;
+  padding: 20px;
+  width: 805px;
+  border: 0px solid #ccc;
+}
+
+#map {
+  margin: 10px 0px 0px 0px;
+  padding: 0px;
+}
+
+h1 {
+  line-height: 1em;
+  font-size: 1.75em;
+  font-weight: 900;
+  color: #000;
+}
+
+p {
+  margin: 5px 0px 0px 0px;
+}
+
+.counties {
+  fill: none;
+}
+
+.states {
+  fill: none;
+  stroke: #fff;
+  stroke-linejoin: round;
+}
+
+select {
+  margin: 5px 0px 0px 0px;
+  display: block;
+}
+
+.tooltip {
+  position: absolute;
+  padding: 7px;
+  font-size: 0.9em;
+  pointer-events: none;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+
+  -moz-box-shadow:    3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+  -webkit-box-shadow: 3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+  box-shadow:         3px 3px 10px 0px rgba(0, 0, 0, 0.25);
+}
+
+.tooltip p {
+  margin: 0;
+  padding: 0;
+}
+
+#legend text {
+  font-size: 0.9em;
+  color: #333;
+  font-weight: 400;
+}
+</style>
+
+</head>
+
+<body>
+
+<div id="content">
+<h1>Selecting TeachBiz's Future Program Sites</h1>
+<p>TeachBiz runs executive education programs tailored to small business owners 
+  in areas with high rates of unemployment and poverty. Understanding the current 
+  landscape of educational gaps, unemployment, and poverty are essential to TeachBiz's plan for expansion. <br>
+  <br>Using data from the United States Census Bureau, 
+  view the unemployment rates, poverty rates, and educational gaps of counties in the United States.</p>
+<br>
+<p><u>Select map below</u></p>
+<select id="varmenu">
+	<option selected value="unemploymentrate">Unemployment Rate</option>
+	<option value="povertyrate">Poverty Rate</option>
+	<option value="nobachdegreerate">No Bachelor's Degree</option>
+</select>
+<div id="map"></div>
+<br><br>
+<p>Visualization by Mike Maieli for IDS-455.<br>
+    Adapted from Doug Dowson's <a href="http://bl.ocks.org/dougdowson/10734337">Tax Statistics Map</a>. <br>
+    Source: United States Census Bureau.</p>
+</div>
+
+<script type="text/javascript" src="https://raw.githubusercontent.com/mikemaieli/d3/master/ids455/opportunitymap/map.js"></script>
+
+</body>
+</html>
+
+

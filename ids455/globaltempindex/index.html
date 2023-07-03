@@ -1,0 +1,193 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+  <style>
+    path.domain {
+      stroke: none;
+    }
+    .tick > line {
+      stroke: #EDF2F4;
+    }
+    .tick > text {
+      fill: #8D99AE;
+      font-size: 14px;
+    }
+    h1 {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 4px;
+      font-family: sans-serif;
+    }
+
+    p {
+      font-size: 12px;
+      margin-top: 0px;
+      margin-bottom: 8px;
+      font-family: sans-serif;
+    }
+  </style>
+  </head>
+  <body>
+    <div style="width:700px;">
+        <h1>Global Land-Ocean Temperature Index, 1880 to 2017</h1>
+        <p>The world is heating up. The Land-Ocean Temperature Index (LOTI) provides a measure of the overall world temperature changes which takes into account both land and water temperatures. LOTI, measured by NASA, provides us with insight into overall temperature changes on earth. The line chart plots out the average LOTI for each year relative to the base period of 1951-1980. The red line reflects the average LOTI for each year, and the grey area shows the LOTI range for each year.</p>
+    </div>  
+    <div id="viz">
+      <svg style="width:700px;height:520px;" ></svg>
+    </div>
+    <script>
+                  
+      d3.csv("https://raw.githubusercontent.com/mikemaieli/d3/master/ids455/globaltempindex/globaltempindex.csv", lineChart);
+      
+      function lineChart(data) {
+        
+        //define axis
+        var xScale = d3.scaleLinear().domain([1880,2017]).range([40,660]);
+        var yScale = d3.scaleLinear().domain([-1.1,1.2]).range([480,20]);
+        
+        //draw x axis
+        var xAxis = d3.axisBottom()
+          .scale(xScale)
+          .tickSize(480)
+          .tickValues([1880,1900,1920,1940,1960,1980,2000,2020])
+          .tickFormat(d3.format("d"));
+        
+        d3.select("svg")
+            .append("g")
+            .attr("id", "xAxisG")
+            .call(xAxis);
+        
+        //label x axis  
+        d3.select("svg")
+            .append("text")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "14px")
+            .attr("fill", "#8D99AE")
+            .attr("transform", "translate(" + (58) + " ," + (472) + ")")
+            .style("text-anchor", "middle")
+            .text("year");
+        
+        //draw y axis        
+        var yAxis = d3.axisLeft()
+          .scale(yScale)
+          .ticks(3)
+          .tickSize(680);
+        
+        d3.select("svg")
+            .append("g")
+            .attr("id", "yAxisG")
+            .attr("transform","translate(700,0)")
+            .call(yAxis);
+        
+        //label y axis
+        d3.select("svg")
+            .append("text")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "14px")
+            .attr("fill", "#8D99AE")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 21)
+            .attr("x", -410)
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .text("degrees celcius");
+
+        //define lines
+        var averageLine = d3.line()
+          .x(d => xScale(d.year))
+          .y(d => yScale(d.average));
+        
+        var maxLine = d3.line()
+          .x(d => xScale(d.year))
+          .y(d => yScale(d.max));
+        
+        var minLine = d3.line()
+          .x(d => xScale(d.year))
+          .y(d => yScale(d.min));
+        
+        //define fill between max and min  
+        var area = d3.area()
+          .x(d => xScale(d.year))
+          .y0(d => yScale(d.min))
+          .y1(d => yScale(d.max));           
+        
+        //draw fill between max and min
+        d3.select("svg")
+          .append("path")
+            .attr("d", area(data))
+            .attr("fill", "#D9D7DD7F")
+        
+        //draw lines
+        d3.select("svg")
+          .append("path")
+            .attr("d", maxLine(data))
+            .attr("fill", "none")
+            .attr("stroke", "#D9D7DD")
+            .attr("stroke-width", 2);
+        
+        d3.select("svg")
+          .append("path")
+            .attr("d", minLine(data))
+            .attr("fill", "none")
+            .attr("stroke", "#D9D7DD")
+            .attr("stroke-width", 2); 
+  
+        d3.select("svg")
+          .append("path")
+            .attr("d", averageLine(data))
+            .attr("fill", "none")
+            .attr("stroke", "#e50000")
+            .attr("stroke-width", 3);
+
+        //draw annotations
+        d3.select("svg")
+          .append("circle")
+            .attr("cx", 308)
+            .attr("cy", 260)
+            .attr("r", 7)
+            .attr("fill", "#000000");
+        
+        d3.select("svg")
+          .append("text")
+            .attr("x", 490)
+            .attr("y", 265)
+            .attr("font-size", "12px")
+            .attr("font-family", "sans-serif")
+            .text("Beginning of the rise");
+        
+        d3.select("svg")
+          .append("text")
+            .attr("x", 472)
+            .attr("y", 65)
+            .attr("font-size", "12px")
+            .attr("font-family", "sans-serif")
+            .text("Highest LOTI recorded in history");
+
+        d3.select("svg")
+          .append("text")
+            .attr("x", 190)
+            .attr("y", 260)
+            .attr("font-size", "12px")
+            .attr("font-family", "sans-serif")
+            .text("Beginning of plateau");
+
+        d3.select("svg")
+          .append("circle")
+            .attr("cx", 476)
+            .attr("cy", 260)
+            .attr("r", 7);
+
+        d3.select("svg")
+          .append("circle")
+            .attr("cx", 655)
+            .attr("cy", 63)
+            .attr("r", 7);     
+        }
+    </script>
+    <div><p>Visualization by Mike Maieli for IDS-455.<br>
+        Adapted from figure 4.18 from Elijah Meek's <i>D3.js in Action</i>.<br>
+        Data from https://data.giss.nasa.gov/gistemp/.</p>
+    </div>
+  </body>
+</html>

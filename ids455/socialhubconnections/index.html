@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<style>
+body {
+  font: 12px verdana;
+}
+
+svg text{
+  fill:black;
+  font-size:12px;
+}
+svg .values text{
+  pointer-events:none;
+  stroke-width: 0.5px;
+}
+.groups:hover{
+  cursor:pointer;
+  font-weight:bold;
+}
+</style>
+<body>
+
+
+<div style="width:900px;">
+  <h2>The Berklee Hub Social Network Connections</h2>
+  <p>The Hub, Berklee’s subscription based network and announcement service, connects users to news from other departments across the college. Similar to a social network like Facebook, the Hub creates a personally curated newsfeed based on each users subscriptions. Through analyzing and visualizing this network subscription data in a chord diagram, we can uncover the connections and information pathways between departments. The chord diagram below shows Hub subscriptions for each department.
+    </p><br>
+  <h3>Reading the Visualization</h3>
+  <p>In the initial view, the number next to a department name represents the number of subscribers to that department’s news.<br>
+    After hovering, the number next to the hovered department remains the same, while also showing the distribution of their subscribers from other departments in the college.
+  </p>
+</div>  
+<script src="http://d3js.org/d3.v4.min.js"></script>
+<script src="http://vizjs.org/viz.v1.1.0.min.js"></script>
+<script>
+
+//data imported from excel
+
+var data = [['Academic Advising','Administration',1]
+,['Academic Advising','Admissions',3]
+,['Academic Advising','Alumni Affairs',3]
+,['Academic Advising','Communications',0]
+,['Academic Advising','Development',0]
+,['Academic Advising','Digital Strategy',3]
+,['Academic Advising','Diversity and Inclusion',3]
+,['Academic Advising','External Affairs',1]
+,['Academic Advising','Finance and Operations',1]
+,['Academic Advising','Human Resources',0]
+,['Academic Advising','Marketing',2]
+,['Academic Advising','Media Relations',2]
+,['Academic Advising','Public Safety',3]
+,['Academic Advising','Technology Resources',3]
+,['Academic Advising','Academic Affairs',8]
+,['Academic Advising','Career Center',5]
+,['Academic Advising','Enrollment',8]
+,['Academic Advising','Financial Aid',6]
+,['Academic Advising','Information Technology',10]
+,['Academic Advising','Office of the President',8]
+,['Academic Advising','Student Activities',6]
+,['Academic Affairs','Diversity and Inclusion',11]
+,['Academic Affairs','Media Relations',12]
+,['Academic Affairs','Admissions',0]
+,['Academic Affairs','Career Center',1]
+,['Academic Affairs','Communications',0]
+,['Academic Affairs','Digital Strategy',3]
+,['Academic Affairs','Enrollment',1]
+,['Academic Affairs','External Affairs',2]
+,['Academic Affairs','Financial Aid',0]
+,['Academic Affairs','Marketing',2]
+,['Academic Affairs','Public Safety',1]
+,['Academic Affairs','Student Activities',2]
+,['Academic Affairs','Technology Resources',1]
+,['Academic Affairs','Academic Advising',6]
+,['Academic Affairs','Administration',5]
+,['Academic Affairs','Alumni Affairs',6]
+,['Academic Affairs','Development',8]
+,['Academic Affairs','Finance and Operations',5]
+,['Academic Affairs','Human Resources',8]
+,['Academic Affairs','Information Technology',7]
+,['Academic Affairs','Office of the President',6]
+,['Administration','Finance and Operations',12]
+,['Administration','Academic Advising',1]
+,['Administration','Admissions',2]
+,['Administration','Alumni Affairs',1]
+,['Administration','Career Center',3]
+,['Administration','Communications',0]
+,['Administration','Development',2]
+,['Administration','Diversity and Inclusion',1]
+,['Administration','Enrollment',0]
+,['Administration','External Affairs',0]
+,['Administration','Financial Aid',1]
+,['Administration','Human Resources',3]
+,['Administration','Marketing',0]
+,['Administration','Media Relations',1]
+,['Administration','Public Safety',1]
+,['Administration','Student Activities',0]
+,['Administration','Technology Resources',2]
+,['Administration','Academic Affairs',9]
+,['Administration','Digital Strategy',9]
+,['Administration','Information Technology',4]
+,['Administration','Office of the President',9]
+,['Admissions','Enrollment',15]
+,['Admissions','Financial Aid',11]
+,['Admissions','Marketing',12]
+,['Admissions','Academic Advising',0]
+,['Admissions','Administration',2]
+,['Admissions','Alumni Affairs',2]
+,['Admissions','Career Center',1]
+,['Admissions','Development',3]
+,['Admissions','External Affairs',0]
+,['Admissions','Human Resources',2]
+,['Admissions','Media Relations',3]
+,['Admissions','Public Safety',3]
+,['Admissions','Technology Resources',0]
+,['Admissions','Academic Affairs',4]
+,['Admissions','Communications',6]
+,['Admissions','Digital Strategy',10]
+,['Admissions','Diversity and Inclusion',10]
+,['Admissions','Finance and Operations',7]
+,['Admissions','Information Technology',4]
+,['Admissions','Office of the President',9]
+,['Admissions','Student Activities',4]
+,['Alumni Affairs','Career Center',15]
+,['Alumni Affairs','Development',11]
+,['Alumni Affairs','Academic Advising',1]
+,['Alumni Affairs','Admissions',3]
+,['Alumni Affairs','Communications',1]
+,['Alumni Affairs','Digital Strategy',1]
+,['Alumni Affairs','Diversity and Inclusion',2]
+,['Alumni Affairs','Enrollment',3]
+,['Alumni Affairs','Finance and Operations',3]
+,['Alumni Affairs','Financial Aid',1]
+,['Alumni Affairs','Human Resources',1]
+,['Alumni Affairs','Marketing',3]
+,['Alumni Affairs','Public Safety',0]
+,['Alumni Affairs','Student Activities',0]
+,['Alumni Affairs','Technology Resources',2]
+,['Alumni Affairs','Academic Affairs',5]
+,['Alumni Affairs','Administration',9]
+,['Alumni Affairs','External Affairs',7]
+,['Alumni Affairs','Information Technology',4]
+,['Alumni Affairs','Media Relations',7]
+,['Alumni Affairs','Office of the President',6]
+,['Career Center','Academic Advising',15]
+,['Career Center','Administration',2]
+,['Career Center','Admissions',2]
+,['Career Center','Communications',0]
+,['Career Center','Digital Strategy',1]
+,['Career Center','Diversity and Inclusion',1]
+,['Career Center','Enrollment',1]
+,['Career Center','External Affairs',1]
+,['Career Center','Finance and Operations',2]
+,['Career Center','Financial Aid',3]
+,['Career Center','Human Resources',3]
+,['Career Center','Marketing',2]
+,['Career Center','Media Relations',2]
+,['Career Center','Public Safety',3]
+,['Career Center','Student Activities',1]
+,['Career Center','Technology Resources',2]
+,['Career Center','Academic Affairs',4]
+,['Career Center','Alumni Affairs',9]
+,['Career Center','Development',9]
+,['Career Center','Information Technology',6]
+,['Career Center','Office of the President',8]
+,['Communications','Digital Strategy',14]
+,['Communications','Marketing',11]
+,['Communications','Administration',1]
+,['Communications','Alumni Affairs',2]
+,['Communications','Development',3]
+,['Communications','Finance and Operations',2]
+,['Communications','Financial Aid',0]
+,['Communications','Public Safety',2]
+,['Communications','Technology Resources',0]
+,['Communications','Academic Advising',4]
+,['Communications','Academic Affairs',7]
+,['Communications','Admissions',10]
+,['Communications','Career Center',5]
+,['Communications','Diversity and Inclusion',7]
+,['Communications','Enrollment',9]
+,['Communications','External Affairs',4]
+,['Communications','Human Resources',10]
+,['Communications','Information Technology',6]
+,['Communications','Media Relations',6]
+,['Communications','Office of the President',10]
+,['Communications','Student Activities',10]
+,['Development','Administration',15]
+,['Development','Alumni Affairs',11]
+,['Development','Academic Advising',0]
+,['Development','Academic Affairs',3]
+,['Development','Admissions',3]
+,['Development','Career Center',3]
+,['Development','Communications',0]
+,['Development','Digital Strategy',0]
+,['Development','Diversity and Inclusion',2]
+,['Development','Enrollment',1]
+,['Development','External Affairs',3]
+,['Development','Financial Aid',3]
+,['Development','Human Resources',0]
+,['Development','Marketing',3]
+,['Development','Media Relations',0]
+,['Development','Public Safety',1]
+,['Development','Student Activities',3]
+,['Development','Technology Resources',2]
+,['Development','Finance and Operations',7]
+,['Development','Information Technology',9]
+,['Development','Office of the President',6]
+,['Digital Strategy','Admissions',11]
+,['Digital Strategy','Communications',13]
+,['Digital Strategy','Academic Advising',0]
+,['Digital Strategy','Academic Affairs',2]
+,['Digital Strategy','Administration',0]
+,['Digital Strategy','Diversity and Inclusion',3]
+,['Digital Strategy','External Affairs',3]
+,['Digital Strategy','Finance and Operations',0]
+,['Digital Strategy','Financial Aid',1]
+,['Digital Strategy','Human Resources',0]
+,['Digital Strategy','Media Relations',1]
+,['Digital Strategy','Public Safety',0]
+,['Digital Strategy','Student Activities',3]
+,['Digital Strategy','Alumni Affairs',4]
+,['Digital Strategy','Career Center',10]
+,['Digital Strategy','Development',8]
+,['Digital Strategy','Enrollment',5]
+,['Digital Strategy','Information Technology',5]
+,['Digital Strategy','Marketing',6]
+,['Digital Strategy','Office of the President',8]
+,['Digital Strategy','Technology Resources',5]
+,['Diversity and Inclusion','Human Resources',14]
+,['Diversity and Inclusion','Administration',3]
+,['Diversity and Inclusion','Alumni Affairs',0]
+,['Diversity and Inclusion','Communications',2]
+,['Diversity and Inclusion','Development',2]
+,['Diversity and Inclusion','Digital Strategy',1]
+,['Diversity and Inclusion','Enrollment',0]
+,['Diversity and Inclusion','Finance and Operations',1]
+,['Diversity and Inclusion','Financial Aid',1]
+,['Diversity and Inclusion','Marketing',1]
+,['Diversity and Inclusion','Media Relations',0]
+,['Diversity and Inclusion','Public Safety',2]
+,['Diversity and Inclusion','Student Activities',3]
+,['Diversity and Inclusion','Technology Resources',2]
+,['Diversity and Inclusion','Academic Advising',7]
+,['Diversity and Inclusion','Academic Affairs',8]
+,['Diversity and Inclusion','Admissions',8]
+,['Diversity and Inclusion','Career Center',4]
+,['Diversity and Inclusion','External Affairs',7]
+,['Diversity and Inclusion','Information Technology',4]
+,['Diversity and Inclusion','Office of the President',4]
+,['Enrollment','Admissions',14]
+,['Enrollment','Alumni Affairs',0]
+,['Enrollment','Career Center',1]
+,['Enrollment','Communications',3]
+,['Enrollment','Development',3]
+,['Enrollment','External Affairs',0]
+,['Enrollment','Finance and Operations',0]
+,['Enrollment','Human Resources',3]
+,['Enrollment','Marketing',0]
+,['Enrollment','Media Relations',0]
+,['Enrollment','Public Safety',1]
+,['Enrollment','Student Activities',2]
+,['Enrollment','Technology Resources',2]
+,['Enrollment','Academic Advising',6]
+,['Enrollment','Academic Affairs',7]
+,['Enrollment','Administration',8]
+,['Enrollment','Digital Strategy',9]
+,['Enrollment','Diversity and Inclusion',10]
+,['Enrollment','Financial Aid',7]
+,['Enrollment','Information Technology',6]
+,['Enrollment','Office of the President',9]
+,['External Affairs','Communications',11]
+,['External Affairs','Development',13]
+,['External Affairs','Marketing',12]
+,['External Affairs','Media Relations',13]
+,['External Affairs','Academic Advising',1]
+,['External Affairs','Academic Affairs',3]
+,['External Affairs','Admissions',0]
+,['External Affairs','Diversity and Inclusion',3]
+,['External Affairs','Enrollment',0]
+,['External Affairs','Finance and Operations',3]
+,['External Affairs','Financial Aid',3]
+,['External Affairs','Human Resources',3]
+,['External Affairs','Public Safety',0]
+,['External Affairs','Student Activities',1]
+,['External Affairs','Technology Resources',0]
+,['External Affairs','Administration',10]
+,['External Affairs','Alumni Affairs',9]
+,['External Affairs','Career Center',5]
+,['External Affairs','Digital Strategy',5]
+,['External Affairs','Information Technology',9]
+,['External Affairs','Office of the President',6]
+,['Finance and Operations','Administration',11]
+,['Finance and Operations','Financial Aid',15]
+,['Finance and Operations','Academic Advising',0]
+,['Finance and Operations','Academic Affairs',2]
+,['Finance and Operations','Admissions',0]
+,['Finance and Operations','Alumni Affairs',1]
+,['Finance and Operations','Career Center',3]
+,['Finance and Operations','Communications',1]
+,['Finance and Operations','Development',0]
+,['Finance and Operations','Diversity and Inclusion',2]
+,['Finance and Operations','Enrollment',1]
+,['Finance and Operations','Marketing',2]
+,['Finance and Operations','Media Relations',1]
+,['Finance and Operations','Public Safety',0]
+,['Finance and Operations','Digital Strategy',10]
+,['Finance and Operations','External Affairs',7]
+,['Finance and Operations','Human Resources',4]
+,['Finance and Operations','Information Technology',9]
+,['Finance and Operations','Office of the President',6]
+,['Finance and Operations','Student Activities',9]
+,['Finance and Operations','Technology Resources',4]
+,['Financial Aid','Academic Advising',11]
+,['Financial Aid','Admissions',13]
+,['Financial Aid','Administration',2]
+,['Financial Aid','Alumni Affairs',3]
+,['Financial Aid','Career Center',2]
+,['Financial Aid','Communications',0]
+,['Financial Aid','Development',0]
+,['Financial Aid','Digital Strategy',0]
+,['Financial Aid','Diversity and Inclusion',0]
+,['Financial Aid','External Affairs',1]
+,['Financial Aid','Finance and Operations',1]
+,['Financial Aid','Human Resources',2]
+,['Financial Aid','Marketing',0]
+,['Financial Aid','Media Relations',0]
+,['Financial Aid','Public Safety',2]
+,['Financial Aid','Student Activities',0]
+,['Financial Aid','Technology Resources',3]
+,['Financial Aid','Academic Affairs',10]
+,['Financial Aid','Enrollment',10]
+,['Financial Aid','Information Technology',9]
+,['Financial Aid','Office of the President',7]
+,['Human Resources','Administration',14]
+,['Human Resources','Diversity and Inclusion',13]
+,['Human Resources','Finance and Operations',11]
+,['Human Resources','Information Technology',11]
+,['Human Resources','Academic Advising',1]
+,['Human Resources','Admissions',1]
+,['Human Resources','Alumni Affairs',0]
+,['Human Resources','Communications',1]
+,['Human Resources','Development',1]
+,['Human Resources','Digital Strategy',1]
+,['Human Resources','Enrollment',1]
+,['Human Resources','External Affairs',0]
+,['Human Resources','Financial Aid',3]
+,['Human Resources','Marketing',0]
+,['Human Resources','Media Relations',1]
+,['Human Resources','Public Safety',1]
+,['Human Resources','Student Activities',3]
+,['Human Resources','Technology Resources',0]
+,['Human Resources','Academic Affairs',4]
+,['Human Resources','Career Center',4]
+,['Human Resources','Office of the President',5]
+,['Information Technology','Technology Resources',14]
+,['Information Technology','Academic Advising',2]
+,['Information Technology','Admissions',3]
+,['Information Technology','Alumni Affairs',0]
+,['Information Technology','Career Center',2]
+,['Information Technology','Communications',1]
+,['Information Technology','Development',0]
+,['Information Technology','Diversity and Inclusion',0]
+,['Information Technology','Enrollment',3]
+,['Information Technology','External Affairs',0]
+,['Information Technology','Financial Aid',3]
+,['Information Technology','Human Resources',0]
+,['Information Technology','Marketing',1]
+,['Information Technology','Media Relations',1]
+,['Information Technology','Public Safety',2]
+,['Information Technology','Student Activities',1]
+,['Information Technology','Academic Affairs',10]
+,['Information Technology','Administration',7]
+,['Information Technology','Digital Strategy',6]
+,['Information Technology','Finance and Operations',9]
+,['Information Technology','Office of the President',4]
+,['Marketing','Alumni Affairs',14]
+,['Marketing','Communications',14]
+,['Marketing','Development',15]
+,['Marketing','Digital Strategy',11]
+,['Marketing','Enrollment',14]
+,['Marketing','External Affairs',15]
+,['Marketing','Media Relations',14]
+,['Marketing','Academic Advising',3]
+,['Marketing','Academic Affairs',0]
+,['Marketing','Administration',3]
+,['Marketing','Finance and Operations',3]
+,['Marketing','Financial Aid',2]
+,['Marketing','Human Resources',2]
+,['Marketing','Public Safety',2]
+,['Marketing','Admissions',9]
+,['Marketing','Career Center',5]
+,['Marketing','Diversity and Inclusion',7]
+,['Marketing','Information Technology',5]
+,['Marketing','Office of the President',10]
+,['Marketing','Student Activities',10]
+,['Marketing','Technology Resources',5]
+,['Media Relations','Development',13]
+,['Media Relations','Marketing',11]
+,['Media Relations','Academic Advising',3]
+,['Media Relations','Admissions',1]
+,['Media Relations','Alumni Affairs',3]
+,['Media Relations','Digital Strategy',2]
+,['Media Relations','External Affairs',0]
+,['Media Relations','Finance and Operations',1]
+,['Media Relations','Financial Aid',1]
+,['Media Relations','Human Resources',3]
+,['Media Relations','Public Safety',1]
+,['Media Relations','Student Activities',3]
+,['Media Relations','Technology Resources',1]
+,['Media Relations','Academic Affairs',6]
+,['Media Relations','Administration',9]
+,['Media Relations','Career Center',5]
+,['Media Relations','Communications',9]
+,['Media Relations','Diversity and Inclusion',4]
+,['Media Relations','Enrollment',8]
+,['Media Relations','Information Technology',9]
+,['Media Relations','Office of the President',4]
+,['Office of the President','Academic Advising',15]
+,['Office of the President','Academic Affairs',12]
+,['Office of the President','Administration',12]
+,['Office of the President','Admissions',11]
+,['Office of the President','Alumni Affairs',14]
+,['Office of the President','Career Center',14]
+,['Office of the President','Communications',11]
+,['Office of the President','Development',14]
+,['Office of the President','Digital Strategy',15]
+,['Office of the President','Diversity and Inclusion',15]
+,['Office of the President','Enrollment',11]
+,['Office of the President','External Affairs',13]
+,['Office of the President','Finance and Operations',11]
+,['Office of the President','Financial Aid',15]
+,['Office of the President','Human Resources',13]
+,['Office of the President','Information Technology',11]
+,['Office of the President','Marketing',12]
+,['Office of the President','Media Relations',11]
+,['Office of the President','Public Safety',11]
+,['Office of the President','Student Activities',14]
+,['Office of the President','Technology Resources',12]
+,['Public Safety','Student Activities',2]
+,['Public Safety','Academic Affairs',1]
+,['Public Safety','Administration',2]
+,['Public Safety','Admissions',1]
+,['Public Safety','Alumni Affairs',1]
+,['Public Safety','Career Center',1]
+,['Public Safety','Development',0]
+,['Public Safety','Digital Strategy',1]
+,['Public Safety','Diversity and Inclusion',2]
+,['Public Safety','External Affairs',2]
+,['Public Safety','Finance and Operations',0]
+,['Public Safety','Financial Aid',0]
+,['Public Safety','Marketing',1]
+,['Public Safety','Media Relations',1]
+,['Public Safety','Technology Resources',3]
+,['Public Safety','Academic Advising',2]
+,['Public Safety','Communications',2]
+,['Public Safety','Enrollment',1]
+,['Public Safety','Human Resources',1]
+,['Public Safety','Information Technology',1]
+,['Public Safety','Office of the President',1]
+,['Student Activities','Career Center',14]
+,['Student Activities','Diversity and Inclusion',15]
+,['Student Activities','Administration',3]
+,['Student Activities','Development',3]
+,['Student Activities','Digital Strategy',3]
+,['Student Activities','External Affairs',0]
+,['Student Activities','Finance and Operations',0]
+,['Student Activities','Financial Aid',3]
+,['Student Activities','Human Resources',1]
+,['Student Activities','Media Relations',1]
+,['Student Activities','Academic Advising',5]
+,['Student Activities','Academic Affairs',8]
+,['Student Activities','Admissions',9]
+,['Student Activities','Alumni Affairs',10]
+,['Student Activities','Communications',6]
+,['Student Activities','Enrollment',10]
+,['Student Activities','Information Technology',4]
+,['Student Activities','Marketing',6]
+,['Student Activities','Office of the President',4]
+,['Student Activities','Public Safety',8]
+,['Student Activities','Technology Resources',5]
+,['Technology Resources','Digital Strategy',13]
+,['Technology Resources','Academic Advising',0]
+,['Technology Resources','Admissions',0]
+,['Technology Resources','Alumni Affairs',0]
+,['Technology Resources','Career Center',1]
+,['Technology Resources','Communications',3]
+,['Technology Resources','Development',0]
+,['Technology Resources','Diversity and Inclusion',0]
+,['Technology Resources','Enrollment',0]
+,['Technology Resources','External Affairs',0]
+,['Technology Resources','Financial Aid',0]
+,['Technology Resources','Human Resources',0]
+,['Technology Resources','Marketing',0]
+,['Technology Resources','Media Relations',0]
+,['Technology Resources','Public Safety',0]
+,['Technology Resources','Student Activities',0]
+,['Technology Resources','Academic Affairs',0]
+,['Technology Resources','Administration',4]
+,['Technology Resources','Finance and Operations',6]
+,['Technology Resources','Information Technology',11]
+,['Technology Resources','Office of the President',7]
+];
+
+//color the departments
+var colors = {
+"Academic Advising":         "#f2f3f4"
+,"Admissions":    "#222222"
+,"Alumni Affairs":    "#f3c300"
+,"Communications":        "#875692"
+,"Development": "#f38400"
+,"Digital Strategy":        "#a1caf1"
+,"Diversity and Inclusion": "#be0032"
+,"External Affairs":      "#c2b280"
+,"Finance and Operations":"#848482"
+,"Human Resources": "#008856"
+,"Marketing":  "#e68fac"
+,"Media Relations":   "#0067a5"
+,"Public Safety":    "#f99379"
+,"Technology Resources":     "#604e97"
+,"Academic Affairs":     "#f6a600"
+,"Career Center":   "#b3446c"
+,"Enrollment":      "#dcd300"
+,"Financial Aid":        "#883d17"
+,"Information Technology":  "#8db600"
+,"Office of the President":   "#654522"
+,"Student Activities":   "#e25822"
+,"Administration":   "#2b3d26"
+};
+
+//order the departments
+var sortOrder =[
+"External Affairs"
+,"Admissions"
+,"Media Relations"
+,"Enrollment"
+,"Digital Strategy"
+,"Finance and Operations"
+,"Academic Affairs"
+,"Alumni Affairs"
+,"Career Center"
+,"Academic Advising"
+,"Financial Aid"
+,"Human Resources"
+,"Development"
+,"Diversity and Inclusion"
+,"Information Technology"
+,"Administration"
+,"Technology Resources"
+,"Public Safety"
+,"Office of the President"
+,"Marketing"
+,"Communications"
+,"Student Activities"
+
+];
+
+function sort(a,b){ return d3.ascending(sortOrder.indexOf(a),sortOrder.indexOf(b)); }
+
+var ch = viz.ch().data(data)
+      .padding(.01)
+      .sort(sort)
+	  .innerRadius(310)
+	  .outerRadius(320)
+	  .duration(1000)
+	  .chordOpacity(0.5)
+	  .labelPadding(.06)
+      .fill(function(d){ return colors[d];});
+
+var width=1200, height=800;
+
+var svg = d3.select("body").append("svg").attr("height",height).attr("width",width);
+
+svg.append("g").attr("transform", "translate(500,400)").call(ch);
+
+</script>
+
+<p>Visualization by Mike Maieli for IDS-455.<br>
+  Adapted from NPashaP's chord diagram <a href="http://bl.ocks.org/NPashaP/ba4c802d5ef68f70c019a9706f77ebf1"><i>2015-16 English Premier League Goals</i></a>.<br>
+  Data retrieved and modified from my organization's intranet subscription program.</p>
